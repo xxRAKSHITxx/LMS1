@@ -19,6 +19,17 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan('dev'));
 //app.use(cors({ origin: [process.env.CLIENT_URL], credentials: true }));
+const allowMethods = ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'];
+const allowHeaders = [
+  'Content-Type',
+  'Authorization',
+  'X-Content-Type-Options',
+  'Accept',
+  'X-Requested-With',
+  'Origin',
+  'Access-Control-Request-Method',
+  'Access-Control-Request-Headers',
+];
 app.options('*', (req, res) => {
     console.log('preflight');
     if (
