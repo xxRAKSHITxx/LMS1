@@ -19,16 +19,20 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan('dev'));
 //app.use(cors({ origin: [process.env.CLIENT_URL], credentials: true }));
-app.use(
-    cors({
-      credentials: true,
-      origin:
-        'https://lms-1-907sfhkrt-xxrakshitxxs-projects.vercel.app/',
-      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-      allowedHeaders:
-        'Content-Type, Authorization, X-Content-Type-Options, Accept, X-Requested-With, Origin, Access-Control-Request-Method, Access-Control-Request-Headers',
-    })
-  );
+app.options('*', (req, res) => {
+    console.log('preflight');
+    if (
+      req.headers.origin ===
+        'https://lms-1-907sfhkrt-xxrakshitxxs-projects.vercel.app/' &&
+      allowMethods.includes(req.headers['access-control-request-method']) &&
+      allowHeaders.includes(req.headers['access-control-request-headers'])
+    ) {
+      console.log('pass');
+      return res.status(204).send();
+    } else {
+      console.log('fail');
+    }
+  });
 
 app.use('/api/v1/user', userRoutes); 
 app.use('/api/v1/courses', courseRoutes); 
