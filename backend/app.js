@@ -30,20 +30,31 @@ const allowHeaders = [
   'Access-Control-Request-Method',
   'Access-Control-Request-Headers',
 ];
+
 app.options('*', (req, res) => {
-    console.log('preflight');
-    if (
-      req.headers.origin ===
-        'https://lms-1-907sfhkrt-xxrakshitxxs-projects.vercel.app/' &&
-      allowMethods.includes(req.headers['access-control-request-method']) &&
-      allowHeaders.includes(req.headers['access-control-request-headers'])
-    ) {
-      console.log('pass');
-      return res.status(204).send();
-    } else {
-      console.log('fail');
-    }
-  });
+  console.log('Preflight request received');
+
+  const origin = req.headers.origin;
+  const requestedMethod = req.headers['access-control-request-method'];
+  const requestedHeaders = req.headers['access-control-request-headers'];
+
+  if (
+    origin === 'https://lms-1-907sfhkrt-xxrakshitxxs-projects.vercel.app' &&
+    allowMethods.includes(requestedMethod) &&
+    requestedHeaders?.split(',').every(header => allowHeaders.includes(header.trim()))
+  ) {
+    console.log('Preflight request passed');
+
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Methods', allowMethods.join(','));
+    res.setHeader('Access-Control-Allow-Headers', allowHeaders.join(','));
+    return res.status(204).send();
+  } else {
+    console.log('Preflight request failed');
+    return res.status(403).send('CORS policy not satisfied');
+  }
+});
+
 
 app.use('/api/v1/user', userRoutes); 
 app.use('/api/v1/courses', courseRoutes); 
