@@ -39,7 +39,7 @@ app.options('*', (req, res) => {
   const requestedHeaders = req.headers['access-control-request-headers'];
 
   if (
-    origin === 'https://lms-1-907sfhkrt-xxrakshitxxs-projects.vercel.app' &&
+    origin === 'https://lms-1-kyhjf40a9-xxrakshitxxs-projects.vercel.app/' &&
     allowMethods.includes(requestedMethod) &&
     requestedHeaders?.split(',').every(header => allowHeaders.includes(header.trim()))
   ) {
