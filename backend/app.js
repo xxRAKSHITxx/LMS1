@@ -19,41 +19,40 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan('dev'));
 //app.use(cors({ origin: [process.env.CLIENT_URL], credentials: true }));
-const allowMethods = ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'];
-const allowHeaders = [
-  'Content-Type',
-  'Authorization',
-  'X-Content-Type-Options',
-  'Accept',
-  'X-Requested-With',
-  'Origin',
-  'Access-Control-Request-Method',
-  'Access-Control-Request-Headers',
-];
+const allowedOrigins = ['https://lms-1-kyhjf40a9-xxrakshitxxs-projects.vercel.app'];
 
-app.options('*', (req, res) => {
-  console.log('Preflight request received');
+// CORS options
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: [
+    'Content-Type',
+    'Authorization',
+    'X-Requested-With',
+    'Accept',
+    'Origin',
+    'Access-Control-Request-Method',
+    'Access-Control-Request-Headers',
+  ],
+};
 
-  const origin = req.headers.origin;
-  const requestedMethod = req.headers['access-control-request-method'];
-  const requestedHeaders = req.headers['access-control-request-headers'];
+// Use the CORS middleware
+app.use(cors(corsOptions));
 
-  if (
-    origin === 'https://lms-1-kyhjf40a9-xxrakshitxxs-projects.vercel.app/' &&
-    allowMethods.includes(requestedMethod) &&
-    requestedHeaders?.split(',').every(header => allowHeaders.includes(header.trim()))
-  ) {
-    console.log('Preflight request passed');
+app.use(express.json()); // Example middleware for JSON parsing
 
-    res.setHeader('Access-Control-Allow-Origin', origin);
-    res.setHeader('Access-Control-Allow-Methods', allowMethods.join(','));
-    res.setHeader('Access-Control-Allow-Headers', allowHeaders.join(','));
-    return res.status(204).send();
-  } else {
-    console.log('Preflight request failed');
-    return res.status(403).send('CORS policy not satisfied');
-  }
+// Routes
+app.post('/api/v1/user/login', (req, res) => {
+  res.json({ message: 'Login successful' });
 });
+
+app.listen(3000, () => console.log('Server running on port 3000'));
 
 
 app.use('/api/v1/user', userRoutes); 
