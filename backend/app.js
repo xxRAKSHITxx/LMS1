@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan('dev'));
 //app.use(cors({ origin: [process.env.CLIENT_URL], credentials: true }));
-const allowedOrigins = ['https://lms-1-kyhjf40a9-xxrakshitxxs-projects.vercel.app'];
+const allowedOrigins = ['https://lms-1-pi.vercel.app/'];
 
 // CORS options
 const corsOptions = {
