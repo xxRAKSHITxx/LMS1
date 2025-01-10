@@ -19,27 +19,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan('dev'));
 //app.use(cors({ origin: [process.env.CLIENT_URL], credentials: true }));
-const allowedOrigins = ['https://lms-1-pi.vercel.app/'];
-
-// CORS options
 const corsOptions = {
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: [
-    'Content-Type',
-    'Authorization',
-    'X-Requested-With',
-    'Accept',
-    'Origin',
-    'Access-Control-Request-Method',
-    'Access-Control-Request-Headers',
-  ],
+  origin: 'https://lms-1-pi.vercel.app', // Replace with your frontend URL
+  optionsSuccessStatus: 200
 };
 
 // Use the CORS middleware
