@@ -13,62 +13,60 @@ import errorMiddleware from './middleware/error.middleware.js';
 
 const app = express();
 
-// Custom CORS middleware wrapper
-const allowCors = (fn) => async (req, res) => {
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  // Alternative: res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
-  );
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
-  return await fn(req, res);
-};
-
-// Middleware
+// middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan('dev'));
-
-// CORS setup
+//app.use(cors({ origin: [process.env.CLIENT_URL], credentials: true }));
 const corsOptions = {
-  origin: 'https://lms-1-pi.vercel.app', // Replace with your frontend URL
-  optionsSuccessStatus: 200,
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      'https://lms-1-pi.vercel.app', 
+      'http://localhost:5173',  // Local development
+      'https://your-production-domain.vercel.app' // Add your exact production domain
+    ];
+    
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+  optionsSuccessStatus: 200
 };
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // Enable preflight requests
+
+// Use the CORS middleware
 app.use(cors(corsOptions));
 
-// Example route to test allowCors function
-const handler = (req, res) => {
-  const d = new Date();
-  res.end(d.toString());
-};
-app.get('/test-cors', allowCors(handler));
+app.use(express.json()); // Example middleware for JSON parsing
 
 // Routes
-app.use('/api/v1/user', userRoutes);
-app.use('/api/v1/courses', courseRoutes);
-// app.use('/api/v1/payments', paymentRoutes);
-app.use('/api/v1/', miscellaneousRoutes);
-
-// Catch-all for undefined routes
-app.all('*', (req, res) => {
-  res.status(404).send('OOPS!! 404 page not found');
+app.post('/api/v1/user/login', (req, res) => {
+  res.json({ message: 'Login successful' });
 });
 
-// Error middleware
+
+
+app.use('/api/v1/user', userRoutes); 
+app.use('/api/v1/courses', courseRoutes); 
+//app.use('/api/v1/payments', paymentRoutes);
+app.use('/api/v1/', miscellaneousRoutes);
+ 
+
+app.all('*', (req, res) => {
+    res.status(404).send('OOPS!! 404 page not found');
+})
+
 app.use(errorMiddleware);
 
-// DB initialization
+// db init
 connectToDb();
-
-// Start the server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 export default app;
