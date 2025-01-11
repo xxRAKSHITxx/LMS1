@@ -34,16 +34,24 @@ export default function Login() {
     setIsLoading(true);
     const Data = { email: loginData.email, password: loginData.password };
 
-    // dispatch create account action
-    const response = await dispatch(login(Data));
-    if (response?.payload?.success) {
-      setLoginData({
-        email: "",
-        password: "",
-      });
-      navigate("/");
+    try {
+      const response = await dispatch(login(Data));
+      
+      if (response.payload.success) {
+        setLoginData({
+          email: "",
+          password: "",
+        });
+        
+        // Redirect to home page after successful login
+        navigate("/");
+      }
+    } catch (error) {
+      // Handle any login errors
+      console.error("Login error", error);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   }
 
   return (

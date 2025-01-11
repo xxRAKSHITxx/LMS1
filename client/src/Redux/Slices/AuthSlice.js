@@ -22,7 +22,7 @@ export const createAccount = createAsyncThunk("/auth/signup", async (data) => {
 })
 
 // .....Login.........
-export const login = createAsyncThunk("/auth/login", async (data) => {
+export const login = createAsyncThunk("/auth/login", async (data, { rejectWithValue }) => {
     const loadingMessage = toast.loading("Please wait! logging into your account...");
     try {
         const res = await axiosInstance.post("/user/login", data);
@@ -30,9 +30,9 @@ export const login = createAsyncThunk("/auth/login", async (data) => {
         return res?.data
     } catch (error) {
         toast.error(error?.response?.data?.message, { id: loadingMessage });
-        throw error;
+        return rejectWithValue(error.response.data);
     }
-})
+});
 
 // .....Logout.........
 export const logout = createAsyncThunk("/auth/logout", async () => {
