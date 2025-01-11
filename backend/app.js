@@ -22,7 +22,7 @@ app.use(morgan('dev'));
 const corsOptions = {
   origin: function (origin, callback) {
     const allowedOrigins = [
-      'https://udyamshala.com/', 
+      'https://udyamshala.com', 
       'http://localhost:5173',  // Local development
       'https://your-production-domain.vercel.app', // Add your exact production domain
       'https://lms-1-34wr5ym84-xxrakshitxxs-projects.vercel.app/'
