@@ -17,31 +17,43 @@ export default function Sidebar({ hideBar = false }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
-  const { isLoggedIn, role, data } = useSelector((state) => state.auth);
+  const { isLoggedIn, role } = useSelector((state) => state.auth);
+
+  // Debugging statements
+  console.log("Sidebar - Current Role:", role);
+  console.log("Sidebar - Is Logged In:", isLoggedIn);
 
   const onLogout = async function () {
+    setIsLoading(true);
     await dispatch(logout());
+    setIsLoading(false);
     navigate("/");
   };
 
   function changeWidth() {
     const drawerSide = document.getElementsByClassName("drawer-side");
-    drawerSide[0].style.width = "auto";
+    if (drawerSide.length > 0) {
+      drawerSide[0].style.width = "auto";
+    }
   }
 
   function hideDrawer() {
-    const element = document.getElementsByClassName("drawer-toggle");
-    element[0].checked = false;
+    const drawerToggle = document.getElementsByClassName("drawer-toggle");
+    if (drawerToggle.length > 0) {
+      drawerToggle[0].checked = false;
+    }
 
     const drawerSide = document.getElementsByClassName("drawer-side");
-    drawerSide[0].style.width = "0";
+    if (drawerSide.length > 0) {
+      drawerSide[0].style.width = "0";
+    }
   }
 
   if (!hideBar) {
     return (
       <div className="drawer absolute left-0 z-50 w-fit">
         <input className="drawer-toggle" id="my-drawer" type="checkbox" />
-        <div className="drawer-content ">
+        <div className="drawer-content">
           <label
             htmlFor="my-drawer"
             className="cursor-pointer fixed top-0 left-3"
@@ -53,12 +65,9 @@ export default function Sidebar({ hideBar = false }) {
             />
           </label>
         </div>
-        <div className="drawer-side  w-0 shadow-custom dark:shadow-lg">
-          <label
-            htmlFor="my-drawer"
-            className="drawer-overlay w-screen"
-          ></label>
-          <ul className="menu  p-4 pt-7 h-[100%] min-w-[250px] max-w-[350px]  bg-white dark:bg-[#29303ea3] backdrop-blur-[8px] text-gray-500 font-inter dark:text-slate-50 md:text-[17px] text-base font-[600] relative">
+        <div className="drawer-side w-0 shadow-custom dark:shadow-lg">
+          <label htmlFor="my-drawer" className="drawer-overlay w-screen"></label>
+          <ul className="menu p-4 pt-7 h-[100%] min-w-[250px] max-w-[350px] bg-white dark:bg-[#29303ea3] backdrop-blur-[8px] text-gray-500 font-inter dark:text-slate-50 md:text-[17px] text-base font-[600] relative">
             <li className="w-fit absolute right-2 z-50 text-red-500">
               <button onClick={hideDrawer}>
                 <AiFillCloseCircle size={28} />
@@ -66,54 +75,48 @@ export default function Sidebar({ hideBar = false }) {
             </li>
             <li>
               <Link to="/" className="flex gap-4 items-center">
-                <FaHome
-                  size={18}
-                  className="text-gray-500 dark:text-slate-100"
-                />
+                <FaHome size={18} className="text-gray-500 dark:text-slate-100" />
                 Home
               </Link>
             </li>
 
+            {/* Admin-specific links */}
             {role === "ADMIN" && (
-              <li>
-                <Link to="/admin/dashboard" className="flex gap-4 items-center">
-                  <FaUserCircle
-                    size={18}
-                    className="text-gray-500 dark:text-slate-100"
-                  />
-                  Admin DashBoard
-                </Link>
-              </li>
-            )}
-
-            {role === "ADMIN" && (
-              <li>
-                <Link to="/course/create" className="flex gap-4 items-center">
-                  <FaPlus
-                    size={18}
-                    className="text-gray-500 dark:text-slate-100"
-                  />
-                  Create new course
-                </Link>
-              </li>
+              <>
+                <li>
+                  <Link
+                    to="/admin/dashboard"
+                    className="flex gap-4 items-center"
+                  >
+                    <FaUserCircle
+                      size={18}
+                      className="text-gray-500 dark:text-slate-100"
+                    />
+                    Admin Dashboard
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/course/create" className="flex gap-4 items-center">
+                    <FaPlus
+                      size={18}
+                      className="text-gray-500 dark:text-slate-100"
+                    />
+                    Create New Course
+                  </Link>
+                </li>
+              </>
             )}
 
             <li>
               <Link to="/courses" className="flex gap-4 items-center">
-                <FaList
-                  size={18}
-                  className="text-gray-500 dark:text-slate-100"
-                />
+                <FaList size={18} className="text-gray-500 dark:text-slate-100" />
                 All Courses
               </Link>
             </li>
 
             <li>
               <Link to="/contact" className="flex gap-4 items-center">
-                <FaPhone
-                  size={18}
-                  className="text-gray-500 dark:text-slate-100"
-                />
+                <FaPhone size={18} className="text-gray-500 dark:text-slate-100" />
                 Contact Us
               </Link>
             </li>
@@ -128,6 +131,7 @@ export default function Sidebar({ hideBar = false }) {
               </Link>
             </li>
 
+            {/* User actions */}
             {isLoggedIn ? (
               <li className="absolute bottom-4 w-[90%]">
                 <div className="w-full flex md:flex-row flex-col gap-2 items-center justify-center">
@@ -139,7 +143,7 @@ export default function Sidebar({ hideBar = false }) {
                     onClick={onLogout}
                     disabled={isLoading}
                   >
-                    <Link>{isLoading ? "Logout..." : "Logout"}</Link>
+                    {isLoading ? "Logout..." : "Logout"}
                   </button>
                 </div>
               </li>
