@@ -24,8 +24,9 @@ const corsOptions = {
     const allowedOrigins = [
       'https://udyamshala.com', 
       'http://localhost:5173',  // Local development
-      'https://your-production-domain.vercel.app', // Add your exact production domain
-      'https://lms-1-34wr5ym84-xxrakshitxxs-projects.vercel.app/'
+      'https://lms-1-yczv.vercel.app', // Add your exact production domain
+      'https://lms-1-yczv-xxrakshitxxs-projects.vercel.app',
+      'https://lms-1-yczv-git-main-xxrakshitxxs-projects.vercel.app'
     ];
     
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
