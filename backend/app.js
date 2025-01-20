@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan('dev'));
-//app.use(cors({ origin: [process.env.CLIENT_URL], credentials: true }));
+app.use(cors({ origin: [process.env.CLIENT_URL], credentials: true }));
 const corsOptions = {
   origin: function (origin, callback) {
     const allowedOrigins = [
@@ -40,26 +40,28 @@ const corsOptions = {
   optionsSuccessStatus: 200
 };
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 app.options('*', cors(corsOptions)); // Enable preflight requests
 
 // Use the CORS middleware
 app.use(cors(corsOptions));
-
+// app.use(cors())
 app.use(express.json()); // Example middleware for JSON parsing
 
 // Routes
-app.post('/api/v1/user/login', (req, res) => {
-  res.json({ message: 'Login successful' });
-});
+// app.post('/api/v1/user/login', (req, res) => {
+//   res.json({ message: 'Login successful' });
+// });
 
 
-
+const PORT=5000;
 app.use('/api/v1/user', userRoutes); 
 app.use('/api/v1/courses', courseRoutes); 
 //app.use('/api/v1/payments', paymentRoutes);
 app.use('/api/v1/', miscellaneousRoutes);
- 
+ app.listen(PORT,()=>{
+  console.log(`server listening on port ${PORT}`);
+ })
 
 app.all('*', (req, res) => {
     res.status(404).send('OOPS!! 404 page not found');

@@ -13,6 +13,7 @@ export const createAccount = createAsyncThunk("/auth/signup", async (data) => {
     const loadingMessage = toast.loading("Please wait! creating your account...");
     try {
         const res = await axiosInstance.post("/user/register", data);
+        console.log(res)
         toast.success(res?.data?.message, { id: loadingMessage });
         return res?.data
     } catch (error) {

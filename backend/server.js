@@ -16,6 +16,6 @@ export const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_SECRET
 })
 
-app.listen(PORT, () => {
-    console.log(`server started at http://localhost:${PORT}`);
-})
+// app.listen(PORT, () => {
+//     console.log(`server started at http://localhost:${PORT}`);
+// })
